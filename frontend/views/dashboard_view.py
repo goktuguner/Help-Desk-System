@@ -58,9 +58,27 @@ class DashboardView(ctk.CTkFrame):
             text_color=COLORS["text_primary"],
         ).pack(side="left", padx=20)
 
-        # Right side — user info + logout
+        # Right side — theme + user info + logout
         right = ctk.CTkFrame(topbar, fg_color="transparent")
         right.pack(side="right", padx=16)
+
+        # Theme Toggle
+        current_theme = ctk.get_appearance_mode()
+        self.theme_btn = ctk.CTkButton(
+            right,
+            text="☀️ Light" if current_theme == "Dark" else "🌙 Dark",
+            width=70,
+            height=32,
+            corner_radius=6,
+            font=ctk.CTkFont(size=12),
+            fg_color=COLORS["bg_card"],
+            hover_color=COLORS["bg_hover"],
+            border_width=1,
+            border_color=COLORS["border"],
+            text_color=COLORS["text_primary"],
+            command=self._toggle_theme,
+        )
+        self.theme_btn.pack(side="left", padx=(0, 16))
 
         role_color = COLORS["primary"] if self.user_data["role"] == "admin" else COLORS["text_muted"]
         ctk.CTkLabel(
@@ -88,6 +106,15 @@ class DashboardView(ctk.CTkFrame):
             hover_color="#DC2626",
             command=self.on_logout,
         ).pack(side="left")
+
+    def _toggle_theme(self):
+        current = ctk.get_appearance_mode()
+        if current == "Dark":
+            ctk.set_appearance_mode("Light")
+            self.theme_btn.configure(text="🌙 Dark")
+        else:
+            ctk.set_appearance_mode("Dark")
+            self.theme_btn.configure(text="☀️ Light")
 
     def _build_sidebar(self, parent):
         sidebar = ctk.CTkFrame(parent, fg_color=COLORS["bg_card"], corner_radius=12, width=230)

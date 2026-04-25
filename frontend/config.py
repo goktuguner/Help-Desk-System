@@ -35,11 +35,11 @@ COLORS = {
     "priority_critical": "#EF4444",
 
     # Neutral
-    "bg_dark": "#1E1B2E",
-    "bg_card": "#2A2740",
-    "bg_hover": "#353250",
-    "text_primary": "#F8FAFC",
-    "text_secondary": "#94A3B8",
-    "text_muted": "#64748B",
-    "border": "#3B3855",
+    "bg_dark": ("#F1F5F9", "#1E1B2E"),      # Slate 100 / Dark
+    "bg_card": ("#FFFFFF", "#2A2740"),      # White / Dark Card
+    "bg_hover": ("#E2E8F0", "#353250"),     # Slate 200 / Dark Hover
+    "text_primary": ("#0F172A", "#F8FAFC"), # Slate 900 / Light
+    "text_secondary": ("#475569", "#94A3B8"), # Slate 600 / Muted Light
+    "text_muted": ("#64748B", "#64748B"),     # Slate 500 / Slate 500
+    "border": ("#CBD5E1", "#3B3855"),       # Slate 300 / Dark Border
 }
