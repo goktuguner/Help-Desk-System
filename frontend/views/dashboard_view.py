@@ -58,9 +58,24 @@ class DashboardView(ctk.CTkFrame):
             text_color=COLORS["text_primary"],
         ).pack(side="left", padx=20)
 
-        # Right side — theme + user info + logout
+        # Right side — user info + theme + logout
         right = ctk.CTkFrame(topbar, fg_color="transparent")
         right.pack(side="right", padx=16)
+
+        role_color = COLORS["primary"] if self.user_data["role"] == "admin" else COLORS["text_muted"]
+        ctk.CTkLabel(
+            right,
+            text=f"👤 {self.user_data['username']}",
+            font=ctk.CTkFont(size=13),
+            text_color=COLORS["text_primary"],
+        ).pack(side="left", padx=(0, 4))
+
+        ctk.CTkLabel(
+            right,
+            text=f"({self.user_data['role'].upper()})",
+            font=ctk.CTkFont(size=11, weight="bold"),
+            text_color=role_color,
+        ).pack(side="left", padx=(0, 16))
 
         # Theme Toggle
         current_theme = ctk.get_appearance_mode()
@@ -79,21 +94,6 @@ class DashboardView(ctk.CTkFrame):
             command=self._toggle_theme,
         )
         self.theme_btn.pack(side="left", padx=(0, 16))
-
-        role_color = COLORS["primary"] if self.user_data["role"] == "admin" else COLORS["text_muted"]
-        ctk.CTkLabel(
-            right,
-            text=f"👤 {self.user_data['username']}",
-            font=ctk.CTkFont(size=13),
-            text_color=COLORS["text_primary"],
-        ).pack(side="left", padx=(0, 4))
-
-        ctk.CTkLabel(
-            right,
-            text=f"({self.user_data['role'].upper()})",
-            font=ctk.CTkFont(size=11, weight="bold"),
-            text_color=role_color,
-        ).pack(side="left", padx=(0, 16))
 
         ctk.CTkButton(
             right,

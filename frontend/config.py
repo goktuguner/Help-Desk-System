@@ -13,10 +13,10 @@ MIN_HEIGHT = 600
 
 # Color palette
 COLORS = {
-    "primary": "#6366F1",       # Indigo
-    "primary_hover": "#4F46E5",
-    "primary_light": "#A5B4FC",
-    "secondary": "#0EA5E9",     # Sky blue
+    "primary": ("#4338CA", "#6366F1"),       # Indigo 700 / Indigo 500
+    "primary_hover": ("#3730A3", "#4F46E5"), # Indigo 800 / Indigo 600
+    "primary_light": ("#818CF8", "#A5B4FC"), # Indigo 400 / Indigo 300
+    "secondary": ("#0284C7", "#0EA5E9"),     # Sky 600 / Sky 500
     "success": "#10B981",       # Emerald
     "warning": "#F59E0B",       # Amber
     "danger": "#EF4444",        # Red
