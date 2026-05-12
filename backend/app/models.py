@@ -78,12 +78,12 @@ class Ticket(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     title: str = Field(max_length=200)
     description: str
-    status: StatusEnum = Field(default=StatusEnum.open)
-    priority: PriorityEnum = Field(default=PriorityEnum.medium)
+    status: StatusEnum = Field(default=StatusEnum.open, index=True)
+    priority: PriorityEnum = Field(default=PriorityEnum.medium, index=True)
 
-    category_id: int = Field(foreign_key="categories.id")
-    creator_id: int = Field(foreign_key="users.id")
-    assignee_id: Optional[int] = Field(default=None, foreign_key="users.id")
+    category_id: int = Field(foreign_key="categories.id", index=True)
+    creator_id: int = Field(foreign_key="users.id", index=True)
+    assignee_id: Optional[int] = Field(default=None, foreign_key="users.id", index=True)
 
     created_at: datetime = Field(default_factory=_utcnow)
     updated_at: datetime = Field(default_factory=_utcnow)
@@ -106,8 +106,8 @@ class Comment(SQLModel, table=True):
 
     id: Optional[int] = Field(default=None, primary_key=True)
     content: str
-    ticket_id: int = Field(foreign_key="tickets.id")
-    author_id: int = Field(foreign_key="users.id")
+    ticket_id: int = Field(foreign_key="tickets.id", index=True)
+    author_id: int = Field(foreign_key="users.id", index=True)
     created_at: datetime = Field(default_factory=_utcnow)
 
     # relationships

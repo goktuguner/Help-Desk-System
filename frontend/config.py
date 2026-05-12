@@ -43,3 +43,6 @@ COLORS = {
     "text_muted": ("#64748B", "#64748B"),     # Slate 500 / Slate 500
     "border": ("#CBD5E1", "#3B3855"),       # Slate 300 / Dark Border
 }
+
+# Icon Rendering Font (Optimized for Emojis on Windows)
+ICON_FONT = ("Segoe UI Emoji", 15)

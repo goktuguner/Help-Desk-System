@@ -3,7 +3,7 @@
 import customtkinter as ctk
 from tkinter import messagebox
 
-from config import COLORS
+from config import COLORS, ICON_FONT
 from widgets.ticket_card import TicketCard
 
 
@@ -66,7 +66,7 @@ class DashboardView(ctk.CTkFrame):
         ctk.CTkLabel(
             right,
             text=f"👤 {self.user_data['username']}",
-            font=ctk.CTkFont(size=13),
+            font=ctk.CTkFont(family=ICON_FONT[0], size=13),
             text_color=COLORS["text_primary"],
         ).pack(side="left", padx=(0, 4))
 
@@ -82,10 +82,10 @@ class DashboardView(ctk.CTkFrame):
         self.theme_btn = ctk.CTkButton(
             right,
             text="☀️ Light" if current_theme == "Dark" else "🌙 Dark",
-            width=70,
+            width=80,
             height=32,
             corner_radius=6,
-            font=ctk.CTkFont(size=12),
+            font=ctk.CTkFont(family=ICON_FONT[0], size=13),
             fg_color=COLORS["bg_card"],
             hover_color=COLORS["bg_hover"],
             border_width=1,

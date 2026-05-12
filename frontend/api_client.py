@@ -11,6 +11,7 @@ class APIClient:
     def __init__(self):
         self.base_url = API_BASE_URL
         self.token: str | None = None
+        self.session = requests.Session()
 
     # ── Auth header ────────────────────────────────────────────────────────
 
@@ -23,27 +24,27 @@ class APIClient:
     # ── Generic request helpers ────────────────────────────────────────────
 
     def _get(self, path: str, params: dict | None = None) -> requests.Response:
-        return requests.get(
+        return self.session.get(
             f"{self.base_url}{path}", headers=self._headers(), params=params, timeout=10
         )
 
     def _post(self, path: str, json: dict | None = None) -> requests.Response:
-        return requests.post(
+        return self.session.post(
             f"{self.base_url}{path}", headers=self._headers(), json=json, timeout=10
         )
 
     def _put(self, path: str, json: dict | None = None) -> requests.Response:
-        return requests.put(
+        return self.session.put(
             f"{self.base_url}{path}", headers=self._headers(), json=json, timeout=10
         )
 
     def _patch(self, path: str, json: dict | None = None) -> requests.Response:
-        return requests.patch(
+        return self.session.patch(
             f"{self.base_url}{path}", headers=self._headers(), json=json, timeout=10
         )
 
     def _delete(self, path: str) -> requests.Response:
-        return requests.delete(f"{self.base_url}{path}", headers=self._headers(), timeout=10)
+        return self.session.delete(f"{self.base_url}{path}", headers=self._headers(), timeout=10)
 
     # ── Auth ───────────────────────────────────────────────────────────────
 

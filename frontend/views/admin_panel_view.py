@@ -3,7 +3,7 @@
 import customtkinter as ctk
 from tkinter import messagebox
 
-from config import COLORS
+from config import COLORS, ICON_FONT
 
 
 class AdminPanelView(ctk.CTkFrame):
@@ -22,7 +22,7 @@ class AdminPanelView(ctk.CTkFrame):
                        hover_color=COLORS["bg_hover"], text_color=COLORS["text_secondary"],
                        font=ctk.CTkFont(size=13), width=160, command=self.on_back
                        ).pack(side="left", padx=12)
-        ctk.CTkLabel(topbar, text="⚙️  Admin Panel", font=ctk.CTkFont(size=15, weight="bold"),
+        ctk.CTkLabel(topbar, text="⚙️  Admin Panel", font=ctk.CTkFont(family=ICON_FONT[0], size=15, weight="bold"),
                      text_color=COLORS["text_primary"]).pack(side="left", padx=8)
 
         # Tab view
@@ -37,9 +37,11 @@ class AdminPanelView(ctk.CTkFrame):
 
         self.tabview.add("Users")
         self.tabview.add("Categories")
+        self.tabview.add("Reports")
 
         self._build_users_tab(self.tabview.tab("Users"))
         self._build_categories_tab(self.tabview.tab("Categories"))
+        self._build_reports_tab(self.tabview.tab("Reports"))
 
     # ── Users Tab ──────────────────────────────────────────────────────────
 
@@ -201,6 +203,7 @@ class AdminPanelView(ctk.CTkFrame):
             ctk.CTkLabel(row, text=cat.get("description") or "—", font=ctk.CTkFont(size=12),
                          text_color=COLORS["text_secondary"], anchor="w").pack(side="left", fill="x", expand=True)
             ctk.CTkButton(row, text="🗑️", width=36, height=28, corner_radius=6,
+                font=ctk.CTkFont(family=ICON_FONT[0], size=14),
                 fg_color=COLORS["danger"], hover_color="#DC2626",
                 command=lambda cid=cat["id"]: self._delete_category(cid)).pack(side="right", padx=12)
 
@@ -247,3 +250,118 @@ class AdminPanelView(ctk.CTkFrame):
                     pass
                 self.after(0, lambda d=detail: messagebox.showerror("Error", d))
         threading.Thread(target=delete, daemon=True).start()
+
+    # ── Reports Tab ────────────────────────────────────────────────────────
+
+    def _build_reports_tab(self, parent):
+        report_frame = ctk.CTkFrame(parent, fg_color="transparent")
+        report_frame.pack(fill="both", expand=True, padx=20, pady=20)
+
+        ctk.CTkLabel(report_frame, text="Export Data & Reports", font=ctk.CTkFont(size=18, weight="bold"),
+                     text_color=COLORS["text_primary"]).pack(anchor="w", pady=(0, 20))
+
+        # Tickets Export
+        card1 = ctk.CTkFrame(report_frame, fg_color=COLORS["bg_dark"], corner_radius=10)
+        card1.pack(fill="x", pady=(0, 16))
+        
+        ctk.CTkLabel(card1, text="All Tickets Export", font=ctk.CTkFont(size=14, weight="bold"),
+                     text_color=COLORS["primary_light"]).pack(anchor="w", padx=16, pady=(16, 4))
+        ctk.CTkLabel(card1, text="Download a complete list of all tickets including their current status and assignee.",
+                     font=ctk.CTkFont(size=12), text_color=COLORS["text_secondary"]).pack(anchor="w", padx=16, pady=(0, 12))
+        
+        ctk.CTkButton(card1, text="📥 Export Tickets (CSV)", height=36, corner_radius=6,
+            fg_color=COLORS["secondary"], hover_color="#0284C7", font=ctk.CTkFont(family=ICON_FONT[0], size=13, weight="bold"),
+            command=self._export_tickets_csv).pack(anchor="w", padx=16, pady=(0, 16))
+
+        # Stats Export
+        card2 = ctk.CTkFrame(report_frame, fg_color=COLORS["bg_dark"], corner_radius=10)
+        card2.pack(fill="x", pady=(0, 16))
+        
+        ctk.CTkLabel(card2, text="Agent Statistics Export", font=ctk.CTkFont(size=14, weight="bold"),
+                     text_color=COLORS["primary_light"]).pack(anchor="w", padx=16, pady=(16, 4))
+        ctk.CTkLabel(card2, text="Download a summary report of how many tickets each staff member has handled.",
+                     font=ctk.CTkFont(size=12), text_color=COLORS["text_secondary"]).pack(anchor="w", padx=16, pady=(0, 12))
+        
+        ctk.CTkButton(card2, text="📊 Export Agent Stats (CSV)", height=36, corner_radius=6,
+            fg_color=COLORS["success"], hover_color="#059669", font=ctk.CTkFont(family=ICON_FONT[0], size=13, weight="bold"),
+            command=self._export_stats_csv).pack(anchor="w", padx=16, pady=(0, 16))
+
+    def _export_tickets_csv(self):
+        from tkinter import filedialog
+        import csv
+        filepath = filedialog.asksaveasfilename(
+            defaultextension=".csv",
+            filetypes=[("CSV Files", "*.csv"), ("All Files", "*.*")],
+            title="Save Tickets Report"
+        )
+        if not filepath:
+            return
+
+        import threading
+        def do_export():
+            try:
+                tickets = self.api.list_tickets()
+                with open(filepath, mode='w', newline='', encoding='utf-8-sig') as f:
+                    writer = csv.writer(f)
+                    writer.writerow(["ID", "Title", "Status", "Priority", "Category", "Creator", "Assignee", "Created At"])
+                    for t in tickets:
+                        cat_name = t.get("category", {}).get("name", "None") if t.get("category") else "None"
+                        creator_name = t.get("creator", {}).get("username", "Unknown") if t.get("creator") else "Unknown"
+                        assignee_name = t.get("assignee", {}).get("username", "Unassigned") if t.get("assignee") else "Unassigned"
+                        
+                        writer.writerow([
+                            t["id"], t["title"], t["status"], t["priority"],
+                            cat_name, creator_name, assignee_name, t["created_at"]
+                        ])
+                if self.winfo_exists():
+                    self.after(0, lambda: messagebox.showinfo("Success", "Tickets exported successfully!"))
+            except Exception as e:
+                if self.winfo_exists():
+                    self.after(0, lambda err=e: messagebox.showerror("Export Error", str(err)))
+
+        threading.Thread(target=do_export, daemon=True).start()
+
+    def _export_stats_csv(self):
+        from tkinter import filedialog
+        import csv
+        filepath = filedialog.asksaveasfilename(
+            defaultextension=".csv",
+            filetypes=[("CSV Files", "*.csv"), ("All Files", "*.*")],
+            title="Save Agent Stats Report"
+        )
+        if not filepath:
+            return
+
+        import threading
+        def do_export():
+            try:
+                tickets = self.api.list_tickets()
+                
+                # Aggregate stats
+                stats = {}
+                for t in tickets:
+                    assignee = t.get("assignee", {}).get("username", "Unassigned") if t.get("assignee") else "Unassigned"
+                    status = t["status"]
+                    
+                    if assignee not in stats:
+                        stats[assignee] = {"Total": 0, "open": 0, "in_progress": 0, "resolved": 0, "closed": 0}
+                    
+                    stats[assignee]["Total"] += 1
+                    if status in stats[assignee]:
+                        stats[assignee][status] += 1
+                        
+                with open(filepath, mode='w', newline='', encoding='utf-8-sig') as f:
+                    writer = csv.writer(f)
+                    writer.writerow(["Agent", "Total Tickets", "Open", "In Progress", "Resolved", "Closed"])
+                    
+                    for agent, data in sorted(stats.items(), key=lambda x: x[1]["Total"], reverse=True):
+                        writer.writerow([
+                            agent, data["Total"], data["open"], data["in_progress"], data["resolved"], data["closed"]
+                        ])
+                if self.winfo_exists():
+                    self.after(0, lambda: messagebox.showinfo("Success", "Agent statistics exported successfully!"))
+            except Exception as e:
+                if self.winfo_exists():
+                    self.after(0, lambda err=e: messagebox.showerror("Export Error", str(err)))
+
+        threading.Thread(target=do_export, daemon=True).start()
