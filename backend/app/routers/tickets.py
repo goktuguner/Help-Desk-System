@@ -10,6 +10,7 @@ from sqlalchemy.orm import joinedload
 from app.auth import get_current_user, require_admin
 from app.database import get_session
 from app.models import Category, PriorityEnum, StatusEnum, Ticket, User
+from app.email_service import send_ticket_created_email
 from app.schemas import (
     TicketAssign,
     TicketCreate,
@@ -82,7 +83,14 @@ def create_ticket(
     session.add(ticket)
     session.commit()
     session.refresh(ticket)
+
+    try:
+       send_ticket_created_email(current_user, ticket)
+    except Exception as e:
+       print(f"Ticket created, but email could not be sent: {e}")
+
     return ticket
+   
 
 
 @router.get("/{ticket_id}", response_model=TicketRead)
