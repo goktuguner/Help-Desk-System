@@ -2,9 +2,10 @@
 
 
 def test_register_success(client):
-    resp = client.post("/api/auth/register", json={
-        "username": "newuser", "email": "new@test.com", "password": "pass123"
-    })
+    resp = client.post(
+        "/api/auth/register",
+        json={"username": "newuser", "email": "new@test.com", "password": "pass123"},
+    )
     assert resp.status_code == 201
     data = resp.json()
     assert data["username"] == "newuser"
@@ -12,25 +13,22 @@ def test_register_success(client):
 
 
 def test_register_duplicate_username(client, normal_user):
-    resp = client.post("/api/auth/register", json={
-        "username": "testuser", "email": "other@test.com", "password": "pass123"
-    })
+    resp = client.post(
+        "/api/auth/register",
+        json={"username": "testuser", "email": "other@test.com", "password": "pass123"},
+    )
     assert resp.status_code == 400
     assert "already taken" in resp.json()["detail"]
 
 
 def test_login_success(client, normal_user):
-    resp = client.post("/api/auth/login", json={
-        "username": "testuser", "password": "test123"
-    })
+    resp = client.post("/api/auth/login", json={"username": "testuser", "password": "test123"})
     assert resp.status_code == 200
     assert "access_token" in resp.json()
 
 
 def test_login_wrong_password(client, normal_user):
-    resp = client.post("/api/auth/login", json={
-        "username": "testuser", "password": "wrongpass"
-    })
+    resp = client.post("/api/auth/login", json={"username": "testuser", "password": "wrongpass"})
     assert resp.status_code == 401
 
 
