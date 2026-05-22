@@ -7,7 +7,6 @@ from pydantic import BaseModel, EmailStr, Field
 
 from app.models import PriorityEnum, RoleEnum, StatusEnum
 
-
 # ── Auth ───────────────────────────────────────────────────────────────────────
 
 

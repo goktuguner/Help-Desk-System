@@ -1,8 +1,8 @@
 """FastAPI application entry point with lifespan, CORS, and router registration."""
 
-from dotenv import load_dotenv
 from contextlib import asynccontextmanager
 
+from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -10,6 +10,7 @@ from app.database import create_db_and_tables
 from app.routers import auth_router, categories, comments, tickets, users
 
 load_dotenv()
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
