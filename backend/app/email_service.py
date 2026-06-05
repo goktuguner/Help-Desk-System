@@ -15,9 +15,9 @@ def send_ticket_created_email(user: User, ticket: Ticket) -> None:
     email_user = os.getenv("EMAIL_USER")
     email_password = os.getenv("EMAIL_PASSWORD")
 
-    if not email_host or not email_user or not email_password or not user.email:
-        print("Email settings are missing. Ticket email was not sent.")
-        return
+    if not email_host or not user.email:
+      print("Email settings are missing or user email is missing. Ticket email was not sent.")
+      return
 
     message = EmailMessage()
     message["From"] = email_user
@@ -43,6 +43,8 @@ Help Desk Team
     )
 
     with smtplib.SMTP(email_host, email_port) as server:
+      if email_user and email_password and email_host != "mailpit":
         server.starttls()
         server.login(email_user, email_password)
-        server.send_message(message)
+
+      server.send_message(message)
