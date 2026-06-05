@@ -16,16 +16,15 @@ def send_ticket_created_email(user: User, ticket: Ticket) -> None:
     email_password = os.getenv("EMAIL_PASSWORD")
 
     if not email_host or not user.email:
-      print("Email settings are missing or user email is missing. Ticket email was not sent.")
-      return
+        print("Email settings are missing or user email is missing. Ticket email was not sent.")
+        return
 
     message = EmailMessage()
     message["From"] = email_user
     message["To"] = user.email
     message["Subject"] = "Ticket Created Successfully"
 
-    message.set_content(
-        f"""
+    message.set_content(f"""
 Hello {user.name if hasattr(user, "name") and user.name else ""},
 
 Your support ticket has been created successfully.
@@ -39,13 +38,11 @@ Our support team will review your request as soon as possible.
 
 Best regards,
 Help Desk Team
-"""
-    )
+""")
 
     with smtplib.SMTP(email_host, email_port) as server:
-      if email_user and email_password and email_host != "mailpit":
-        server.starttls()
-        server.login(email_user, email_password)
+        if email_user and email_password and email_host != "mailpit":
+            server.starttls()
+            server.login(email_user, email_password)
 
-      server.send_message(message)
-
+        server.send_message(message)
