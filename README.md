@@ -107,6 +107,15 @@ Then start the frontend locally:
 cd frontend
 python app.py
 ```
+### Mail Testing with Mailpit
+
+When the project is run with Docker, ticket creation notification emails are tested using Mailpit.
+
+After starting Docker Compose, outgoing test emails can be viewed in the browser at:
+
+http://localhost:8025
+
+This allows the project to test email sending locally without depending on an external provider such as Gmail.
 
 ## Running Tests
 

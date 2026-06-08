@@ -1,8 +1,8 @@
 """Comment CRUD router for ticket discussions."""
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlmodel import Session, col, select
 from sqlalchemy.orm import joinedload
+from sqlmodel import Session, col, select
 
 from app.auth import get_current_user
 from app.database import get_session

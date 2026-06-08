@@ -56,9 +56,7 @@ def update_category(
     # Check name uniqueness if changing name
     if "name" in update_data:
         existing = session.exec(
-            select(Category).where(
-                Category.name == update_data["name"], Category.id != category_id
-            )
+            select(Category).where(Category.name == update_data["name"], Category.id != category_id)
         ).first()
         if existing:
             raise HTTPException(status_code=400, detail="Category name already exists")
@@ -84,9 +82,7 @@ def delete_category(
         raise HTTPException(status_code=404, detail="Category not found")
 
     # Prevent deletion if tickets use this category
-    ticket_count = len(
-        session.exec(select(Ticket).where(Ticket.category_id == category_id)).all()
-    )
+    ticket_count = len(session.exec(select(Ticket).where(Ticket.category_id == category_id)).all())
     if ticket_count > 0:
         raise HTTPException(
             status_code=400,

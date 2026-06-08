@@ -13,8 +13,10 @@ def test_list_users_non_admin_forbidden(client, user_token):
 
 
 def test_change_user_role(client, admin_token, normal_user):
-    resp = client.patch(f"/api/users/{normal_user.id}/role",
-                        json={"role": "admin"},
-                        headers={"Authorization": f"Bearer {admin_token}"})
+    resp = client.patch(
+        f"/api/users/{normal_user.id}/role",
+        json={"role": "admin"},
+        headers={"Authorization": f"Bearer {admin_token}"},
+    )
     assert resp.status_code == 200
     assert resp.json()["role"] == "admin"

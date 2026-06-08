@@ -12,4 +12,17 @@ services:
     environment:
       - DATABASE_URL=sqlite:///data/helpdesk.db
       - SECRET_KEY=helpdesk-docker-secret-key
+      - EMAIL_HOST=${EMAIL_HOST}
+      - EMAIL_PORT=${EMAIL_PORT}
+      - EMAIL_USER=${EMAIL_USER}
+      - EMAIL_PASSWORD=${EMAIL_PASSWORD}
+     
+    depends_on:
+      - mailpit
+  mailpit:
+    image: axllent/mailpit
+    ports:
+      - "8025:8025"
+      - "1025:1025"
     restart: unless-stopped
+    

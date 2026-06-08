@@ -4,11 +4,12 @@ from datetime import datetime, timezone
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlmodel import Session, col, select
 from sqlalchemy.orm import joinedload
+from sqlmodel import Session, col, select
 
 from app.auth import get_current_user, require_admin
 from app.database import get_session
+from app.email_service import send_ticket_created_email
 from app.models import Category, PriorityEnum, StatusEnum, Ticket, User
 from app.schemas import (
     TicketAssign,
@@ -82,6 +83,12 @@ def create_ticket(
     session.add(ticket)
     session.commit()
     session.refresh(ticket)
+
+    try:
+        send_ticket_created_email(current_user, ticket)
+    except Exception as e:
+        print(f"Ticket created, but email could not be sent: {e}")
+
     return ticket
 
 
@@ -92,10 +99,14 @@ def get_ticket(
     current_user: User = Depends(get_current_user),
 ):
     """Get a single ticket by ID."""
-    query = select(Ticket).where(Ticket.id == ticket_id).options(
-        joinedload(Ticket.category),
-        joinedload(Ticket.creator),
-        joinedload(Ticket.assignee),
+    query = (
+        select(Ticket)
+        .where(Ticket.id == ticket_id)
+        .options(
+            joinedload(Ticket.category),
+            joinedload(Ticket.creator),
+            joinedload(Ticket.assignee),
+        )
     )
     ticket = session.exec(query).first()
     if not ticket:
